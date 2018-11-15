@@ -17,4 +17,39 @@
 # We can also keep only two values.
 [System.Diagnostics.Process]::GetProcesses() | Select-Object -Property 'ProcessName','Responding'
 
+# To get the type of the variable "$_":
+#    $_.getType()  # => System.Object
+# To get the members of the object "$_":
+#    Get-Member -InputObject $_
+# To get the properties of the object "$_":
+#    Get-Member -MemberType NoteProperty -InputObject $_;
+#
+# NOte: NoteProperties are generic properties that are created by Powershell (as opposed to properties that are
+#       inherited from a specific dotnet object type).
+#       See: https://stackoverflow.com/questions/29141914/what-is-a-powershell-noteproperty
+([System.Diagnostics.Process]::GetProcesses() | Select-Object -Property 'ProcessName','Responding').ForEach({
+    # $_ is a "System.Object"
+    # And it has two properties: ProcessName and Responding.
+    Write-Host "$($_.ProcessName) => $($_.Responding)"
+})
+
+# Or... because "Get-Process" is the short name for "[System.Diagnostics.Process]::GetProcesses() | Select-Object -Property 'ProcessName','Responding'"
+# Here, we build a hash that contains the data.
+$data = @{}
+(Get-Process | Select-Object -Property 'ProcessName','Responding').ForEach({
+    if (! $data.ContainsKey($_.ProcessName)) {
+        $data[$_.ProcessName] = @()
+    }
+    $data[$_.ProcessName] += $_.Responding
+})
+
+($data.GetEnumerator() | Sort-Object -Property Key -Descending).ForEach({
+    Write-Host "$($_.Key):"
+    $_.Value.Foreach({ # $_.Value is an array.
+        Write-Host "`t$_"
+    })
+})
+
+
+
 
