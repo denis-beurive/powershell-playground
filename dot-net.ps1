@@ -50,6 +50,14 @@ $data = @{}
     })
 })
 
+# Testing System.Diagnostics.Process::GetProcessesByName
+[System.Diagnostics.Process]::GetProcessesByName('bash')
 
-
+# First: consult the help for the command Get-Process, so you get its usage.
+# pwsh -Command "Get-Help Get-Process"
+(Get-Process -Name 'bash' | Select-Object -Property 'ProcessName','Responding').ForEach({
+    # $_ is a "System.Object"
+    # And it has two properties: ProcessName and Responding.
+    Write-Host "$($_.ProcessName) => $($_.Responding)"
+})
 
