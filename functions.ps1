@@ -85,6 +85,7 @@ function name_to_uppercase {
 Write-Host "The name in uppercase is $(name_to_uppercase @args)"
 
 # Pipelines.
+# Pipelines come from the traditional UNIX shells, where commands pass values from one to another.
 function stack_it {
     begin {
         Write-Host "Start"
@@ -102,3 +103,13 @@ function stack_it {
 $a = @(100, 200, 300)
 $a | stack_it
 
+# Here is a use case similar to what we find with Bash.
+function producer {
+    return @(10, 100, 100)
+}
+producer | stack_it
+
+# Additional note:
+# PowerShell functions or commands may return objects instead of scalar values.
+# For these use cases, PowerShell provides commands that can be used to select properties or methods.
+# Example: ... | Sort-Object -Property Key -Descending
